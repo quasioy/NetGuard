@@ -1,0 +1,85 @@
+language: android
+jdk: oraclejdk8
+sudo: false
+
+
+env:
+  global:
+    - MAJOR_MINOR=0.1
+    - RELEASE_PKG_FOLDER_PATH=app/build/outputs/apk/
+    - RELEASE_PKG_FILE=YourAppName-${TRAVIS_BRANCH}-${MAJOR_MINOR}.${TRAVIS_BUILD_NUMBER}.apk
+    - APK_MD5_FILE=md5sum.txt
+    - APK_SHA1SUM_FILE=sha1sum.txt
+    - CHANGELOG_FILE=YourAppName-${TRAVIS_BRANCH}-${MAJOR_MINOR}.${TRAVIS_BUILD_NUMBER}-changelog.txt
+#    - ANDROID_EMULATOR_API_LEVEL=19
+
+
+# safelist
+branches:
+  only:
+  - master
+  - develop
+
+
+android:
+  components:
+    - tools # to get the new `repository-11.xml`
+    - tools # see https://github.com/travis-ci/travis-ci/issues/6040#issuecomment-219367943)
+    - platform-tools #latest
+    - build-tools-26.0.2
+    - android-26
+    - extra-android-m2repository
+#    - extra-android-support
+#    - sys-img-armeabi-v7a-android-19
+
+
+before_install:
+    - chmod +x gradlew
+    - chmod a+x ./scripts/changelog.sh
+
+#install: ./gradlew clean
+
+script:
+   - bash ./gradlew assembleDebug check;
+#   - bash ./gradlew app:assembleRelease check;
+
+cache:
+   directories:
+       - "$HOME/.gradle/caches/"
+       - "$HOME/.gradle/wrapper/"
+       - "$HOME/.android/build-cache"
+
+
+after_success:
+    #needed to push the apk to Github releases
+    - sh scripts/set_tags.sh
+
+
+before_deploy:
+    #keeping the builds in one place
+    - mv app/build/outputs/apk/debug/app-debug.apk $RELEASE_PKG_FOLDER_PATH$RELEASE_PKG_FILE
+    #calculating and storing the md5sum and sha1sum along with the build
+    - cd $RELEASE_PKG_FOLDER_PATH; ls -la; md5sum $RELEASE_PKG_FILE > $APK_MD5_FILE; sha1sum $RELEASE_PKG_FILE > $APK_SHA1SUM_FILE; ls -la; cd -
+
+    #getting and storing the changelog for the current build
+    - sh scripts/changelog.sh
+    - sh scripts/changelog.sh > $RELEASE_PKG_FOLDER_PATH$CHANGELOG_FILE
+
+    - echo "Deploying apk file $RELEASE_PKG_FILE from $RELEASE_PKG_FOLDER_PATH$RELEASE_PKG_FILE to GitHub releases"
+
+    #update the tags in project
+    - git fetch --tags
+
+
+deploy:
+  - provider: releases
+    skip_cleanup: true
+    api_key: $GITHUB_TOKEN
+    file_glob: true
+    file:
+        - $RELEASE_PKG_FOLDER_PATH$RELEASE_PKG_FILE
+        - $RELEASE_PKG_FOLDER_PATH$APK_MD5_FILE
+        - $RELEASE_PKG_FOLDER_PATH$APK_SHA1SUM_FILE
+        - $RELEASE_PKG_FOLDER_PATH$CHANGELOG_FILE
+    on:
+      all_branches: true
