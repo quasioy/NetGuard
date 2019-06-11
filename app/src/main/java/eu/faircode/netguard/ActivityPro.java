@@ -19,10 +19,8 @@ package eu.faircode.netguard;
     Copyright 2015-2019 by Marcel Bokhorst (M66B)
 */
 
-import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.Paint;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -137,21 +135,21 @@ public class ActivityPro extends AppCompatActivity {
                         break;
                 }
 
-                Intent intent = new Intent(Intent.ACTION_VIEW);
+                /*Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setData(Uri.parse("http://www.netguard.me/#" + sku));
                 if (intent.resolveActivity(getPackageManager()) != null)
-                    startActivity(intent);
+                    startActivity(intent);*/
             }
         };
 
-        tvLogTitle.setOnClickListener(listener);
+        /*tvLogTitle.setOnClickListener(listener);
         tvFilterTitle.setOnClickListener(listener);
         tvNotifyTitle.setOnClickListener(listener);
         tvSpeedTitle.setOnClickListener(listener);
         tvThemeTitle.setOnClickListener(listener);
         tvAllTitle.setOnClickListener(listener);
         tvDev1Title.setOnClickListener(listener);
-        tvDev2Title.setOnClickListener(listener);
+        tvDev2Title.setOnClickListener(listener);*/
 
         try {
             iab = new IAB(new IAB.Delegate() {
@@ -159,7 +157,7 @@ public class ActivityPro extends AppCompatActivity {
                 public void onReady(final IAB iab) {
                     Log.i(TAG, "IAB ready");
                     try {
-                        iab.updatePurchases();
+                        //iab.updatePurchases();
                         updateState();
 
                         final Button btnLog = findViewById(R.id.btnLog);
@@ -171,7 +169,7 @@ public class ActivityPro extends AppCompatActivity {
                         final Button btnDev1 = findViewById(R.id.btnDev1);
                         final Button btnDev2 = findViewById(R.id.btnDev2);
 
-                        View.OnClickListener listener = new View.OnClickListener() {
+                        /*View.OnClickListener listener = new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
                                 try {
@@ -218,7 +216,7 @@ public class ActivityPro extends AppCompatActivity {
                         btnTheme.setOnClickListener(listener);
                         btnAll.setOnClickListener(listener);
                         btnDev1.setOnClickListener(listener);
-                        btnDev2.setOnClickListener(listener);
+                        btnDev2.setOnClickListener(listener);*/
 
                         btnLog.setEnabled(true);
                         btnFilter.setEnabled(true);
@@ -234,7 +232,7 @@ public class ActivityPro extends AppCompatActivity {
                     }
                 }
             }, this);
-            iab.bind();
+            //iab.bind();
         } catch (Throwable ex) {
             Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
         }
@@ -243,7 +241,7 @@ public class ActivityPro extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         Log.i(TAG, "Destroy");
-        iab.unbind();
+        // iab.unbind();
         iab = null;
         super.onDestroy();
     }

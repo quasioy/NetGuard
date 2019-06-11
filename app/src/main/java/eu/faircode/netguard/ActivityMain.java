@@ -173,7 +173,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         ivQueue.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                int location[] = new int[2];
+                int[] location = new int[2];
                 actionView.getLocationOnScreen(location);
                 Toast toast = Toast.makeText(ActivityMain.this, R.string.msg_queue, Toast.LENGTH_LONG);
                 toast.setGravity(
@@ -266,7 +266,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
         ivMetered.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                int location[] = new int[2];
+                int[] location = new int[2];
                 actionView.getLocationOnScreen(location);
                 Toast toast = Toast.makeText(ActivityMain.this, R.string.msg_metered, Toast.LENGTH_LONG);
                 toast.setGravity(
@@ -408,7 +408,7 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                 @Override
                 public void onReady(IAB iab) {
                     try {
-                        iab.updatePurchases();
+                        //iab.updatePurchases();
 
                         if (!IAB.isPurchased(ActivityPro.SKU_LOG, ActivityMain.this))
                             prefs.edit().putBoolean("log", false).apply();
@@ -422,12 +422,12 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
                             prefs.edit().putBoolean("show_stats", false).apply();
                     } catch (Throwable ex) {
                         Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
-                    } finally {
+                    } /*finally {
                         iab.unbind();
-                    }
+                    }*/
                 }
             }, this);
-            iab.bind();
+            //iab.bind();
         } catch (Throwable ex) {
             Log.e(TAG, ex.toString() + "\n" + Log.getStackTraceString(ex));
         }
@@ -552,10 +552,10 @@ public class ActivityMain extends AppCompatActivity implements SharedPreferences
             dialogAbout = null;
         }
 
-        if (iab != null) {
+        /*if (iab != null) {
             iab.unbind();
             iab = null;
-        }
+        }*/
 
         super.onDestroy();
     }

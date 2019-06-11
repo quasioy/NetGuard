@@ -19,44 +19,28 @@ package eu.faircode.netguard;
     Copyright 2015-2019 by Marcel Bokhorst (M66B)
 */
 
-import android.app.PendingIntent;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.os.IBinder;
-import android.os.RemoteException;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.android.vending.billing.IInAppBillingService;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.List;
-
-public class IAB implements ServiceConnection {
+public class IAB /*implements ServiceConnection */ {
     private static final String TAG = "NetGuard.IAB";
 
-    private Context context;
+    /*private Context context;
     private Delegate delegate;
     private IInAppBillingService service = null;
 
-    private static final int IAB_VERSION = 3;
+    private static final int IAB_VERSION = 3;*/
 
     public interface Delegate {
         void onReady(IAB iab);
     }
 
     public IAB(Delegate delegate, Context context) {
-        this.context = context.getApplicationContext();
-        this.delegate = delegate;
+       /* this.context = context.getApplicationContext();
+        this.delegate = delegate;*/
     }
-
+/*
     public void bind() {
         Log.i(TAG, "Bind");
         Intent serviceIntent = new Intent("com.android.vending.billing.InAppBillingService.BIND");
@@ -85,37 +69,9 @@ public class IAB implements ServiceConnection {
         service = null;
     }
 
-    public boolean isAvailable(String sku) throws RemoteException, JSONException {
-        // Get available SKUs
-        ArrayList<String> skuList = new ArrayList<>();
-        skuList.add(sku);
-        Bundle query = new Bundle();
-        query.putStringArrayList("ITEM_ID_LIST", skuList);
-        Bundle bundle = service.getSkuDetails(IAB_VERSION, context.getPackageName(), "inapp", query);
-        Log.i(TAG, "getSkuDetails");
-        Util.logBundle(bundle);
-        int response = (bundle == null ? -1 : bundle.getInt("RESPONSE_CODE", -1));
-        Log.i(TAG, "Response=" + getResult(response));
-        if (response != 0)
-            throw new IllegalArgumentException(getResult(response));
-
-        // Check available SKUs
-        boolean found = false;
-        ArrayList<String> details = bundle.getStringArrayList("DETAILS_LIST");
-        if (details != null)
-            for (String item : details) {
-                JSONObject object = new JSONObject(item);
-                if (sku.equals(object.getString("productId"))) {
-                    found = true;
-                    break;
-                }
-            }
-        Log.i(TAG, sku + "=" + found);
-
-        return found;
-    }
-
     public void updatePurchases() throws RemoteException {
+        return;
+
         // Get purchases
         List<String> skus = getPurchases();
 
@@ -124,17 +80,13 @@ public class IAB implements ServiceConnection {
         for (String product : prefs.getAll().keySet())
             if (!ActivityPro.SKU_DONATION.equals(product)) {
                 Log.i(TAG, "removing SKU=" + product);
-                editor.remove(product);
+                //editor.remove(product);
             }
         for (String sku : skus) {
             Log.i(TAG, "adding SKU=" + sku);
             editor.putBoolean(sku, true);
         }
         editor.apply();
-    }
-
-    public boolean isPurchased(String sku) throws RemoteException {
-        return getPurchases().contains(sku);
     }
 
     public List<String> getPurchases() throws RemoteException {
@@ -164,7 +116,7 @@ public class IAB implements ServiceConnection {
         if (!bundle.containsKey("BUY_INTENT"))
             throw new IllegalArgumentException("BUY_INTENT missing");
         return bundle.getParcelable("BUY_INTENT");
-    }
+    }*/
 
     public static void setBought(String sku, Context context) {
         Log.i(TAG, "Bought " + sku);
@@ -173,7 +125,8 @@ public class IAB implements ServiceConnection {
     }
 
     public static boolean isPurchased(String sku, Context context) {
-        try {
+        return true;
+        /*try {
             if (Util.isDebuggable(context)) {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
                 return !prefs.getBoolean("debug_iab", false);
@@ -188,11 +141,12 @@ public class IAB implements ServiceConnection {
                     prefs.getBoolean(ActivityPro.SKU_DONATION, false));
         } catch (SecurityException ignored) {
             return false;
-        }
+        }*/
     }
 
     public static boolean isPurchasedAny(Context context) {
-        try {
+        return true;
+        /*try {
             if (Util.isDebuggable(context)) {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
                 return !(prefs.getBoolean("debug_iab", false));
@@ -205,7 +159,7 @@ public class IAB implements ServiceConnection {
             return false;
         } catch (SecurityException ignored) {
             return false;
-        }
+        }*/
     }
 
     public static String getResult(int responseCode) {
